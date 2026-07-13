@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
-import NavBar from "./NavBar";
 import axios from "axios";
+import NavBar from "./NavBar";
 
 const ViewDonors = () => {
   const [donors, setDonors] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [selectedBloodGroup, setSelectedBloodGroup] = useState("");
 
   useEffect(() => {
-    setLoading(true);
-    
-    let url = "http://localhost:5000/api/donors"; 
+    let url = "https://host-demo-app.onrender.com/api/donors";
     if (selectedBloodGroup) {
       url += `?blood_group=${encodeURIComponent(selectedBloodGroup)}`;
     }
@@ -18,12 +15,10 @@ const ViewDonors = () => {
     axios
       .get(url)
       .then((response) => {
-        setDonors(response.data.donors || response.data);
-        setLoading(false);
+        setDonors(response.data);
       })
       .catch((error) => {
         console.error("Error fetching donor data:", error);
-        setLoading(false);
       });
   }, [selectedBloodGroup]);
 
@@ -33,7 +28,7 @@ const ViewDonors = () => {
 
   return (
     <div>
-      <NavBar />
+        <NavBar/>
       <div className="container" style={{ padding: 10, margin: "50px auto" }}>
         <h1 style={{ marginBottom: 30 }}>View Donors</h1>
 
@@ -61,11 +56,7 @@ const ViewDonors = () => {
           </div>
         </div>
 
-        {loading ? (
-          <div className="alert alert-info text-center" role="alert">
-            <h4>Loading Donor Information...</h4>
-          </div>
-        ) : donors.length === 0 ? (
+        {donors.length === 0 ? (
           <div className="alert alert-warning text-center" role="alert">
             No donors found matching this criteria.
           </div>
@@ -85,7 +76,7 @@ const ViewDonors = () => {
               </thead>
               <tbody>
                 {donors.map((donor, index) => (
-                  <tr key={donor._id || index}>
+                  <tr key={donor.id || index}>
                     <td>{donor.donor_name}</td>
                     <td>{donor.age}</td>
                     <td>{donor.gender}</td>
